@@ -8,8 +8,6 @@ users:
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  annotations:
-    argocd.argoproj.io/sync-wave: "10"
   name: my-project
   namespace: openshift-gitops
   # Finalizer that ensures that project is not deleted until it is not referenced by any application
@@ -80,7 +78,6 @@ spec:
       syncPolicy:
         automated: 
           prune: true
-        preserveResourcesOnDeletion: false
         syncOptions:
           - CreateNamespace=true
           - ApplyOutOfSyncOnly=true
