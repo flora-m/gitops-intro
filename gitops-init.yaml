@@ -1,0 +1,86 @@
+apiVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: argo-admins
+users:
+  - opentlc-mgr
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  name: my-project
+  namespace: openshift-gitops
+  # Finalizer that ensures that project is not deleted until it is not referenced by any application
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  # Project description
+  description: Example Project to demo gitops 
+
+  # Allow manifests to deploy from any Git repos
+  sourceRepos:
+  - '*'
+
+  # Only permit applications to deploy to any namespace in the same cluster
+  # Destination clusters can be identified by 'server', 'name', or both.
+  destinations:
+  - namespace: '*'
+    server: https://kubernetes.default.svc
+    name: in-cluster
+
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+
+
+  namespaceResourceWhitelist:
+   - group: '*'
+     kind: '*'
+
+  # Enables namespace orphaned resource monitoring.
+  orphanedResources:
+    warn: false
+
+  roles:
+    - name: project-admins
+      policies:
+        - p, proj:my-project:project-admins, applications, sync, my-project/*, allow
+        - p, proj:my-project:project-admins, applications, delete, my-project/*, allow 
+      groups:
+        - argo-admins
+
+  
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: my-appset
+  namespace: openshift-gitops
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/spiro-redhat/gitops-intro.git
+      revision: main
+      directories:
+      - path: apps/*
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: my-project
+      source:
+        repoURL: https://github.com/spiro-redhat/gitops-intro.git
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        name: in-cluster
+        namespace: '{{path.basename}}'
+      syncPolicy:
+        automated: 
+          prune: true
+        preserveResourcesOnDeletion: false
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true

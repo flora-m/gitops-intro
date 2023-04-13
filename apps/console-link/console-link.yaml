@@ -1,0 +1,23 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: application-menu-gitops-cookbook 
+spec:
+  href: 'https://developers.redhat.com/e-books/gitops-cookbook'
+  location: ApplicationMenu
+  text: GitOps Cook Book
+  applicationMenu:
+    section: My Links 
+    imageURL: https://developers.redhat.com/sites/default/files/styles/cheat_sheet_feature/public/gitops-cookbook-ebook-cover.png
+--- 
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: application-menu-getting-gitops 
+spec:
+  href: 'https://developers.redhat.com/e-books/getting-gitops-practical-platform-openshift-argo-cd-and-tekton'
+  location: ApplicationMenu
+  text: Getting GitOps
+  applicationMenu:
+    section: My Links 
+    imageURL: https://developers.redhat.com/sites/default/files/styles/cheat_sheet_feature/public/GettingGitOps-book-cover.png
