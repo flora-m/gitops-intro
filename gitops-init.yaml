@@ -59,7 +59,7 @@ metadata:
 spec:
   generators:
   - git:
-      repoURL: https://github.com/spiro-redhat/gitops-intro.git
+      repoURL: https://github.com/flora-m/gitops-intro.git
       revision: main
       directories:
       - path: apps/*
@@ -69,7 +69,7 @@ spec:
     spec:
       project: my-project
       source:
-        repoURL: https://github.com/spiro-redhat/gitops-intro.git
+        repoURL: https://github.com/flora-m/gitops-intro.git
         targetRevision: main
         path: '{{path}}'
       destination:
